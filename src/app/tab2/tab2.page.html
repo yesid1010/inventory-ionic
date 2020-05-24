@@ -1,39 +1,52 @@
 <ion-header [translucent]="true" no-border>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>
       Producto
     </ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)=" deleteAll()" color="danger">
+  <ion-buttons slot="end">
+      <ion-button (click)="DeleteAllProducts()" >
         <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-      </ion-button>
+      </ion-button> 
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
 
-  <ion-label class="ion-padding" *ngIf="products == ''">No hay productos guardados</ion-label>
-
   <ion-list >
     <ion-item-sliding *ngFor="let product of products">
       <ion-item (click)="openProduct(product)">
+        <ion-icon  slot="start" color="primary" name="beer-outline"></ion-icon>
         <ion-label>
            <h2>{{product.name}}</h2>
-           <p>{{product.price}}</p>
-           <p>{{product.code}}</p>
+           <!-- <p><ion-icon  slot="start" color="primary" name="barcode-outline"></ion-icon>{{product.code}}</p> -->
         </ion-label>
+        <ion-badge color="success" slot="end">${{product.price}}</ion-badge>
       </ion-item>
 
       <ion-item-options side="start">
-        <ion-item-option (click)="updateAlert(product)" color="primary">
+        <ion-item-option (click)="updateProduct(product)" color="primary">
           <ion-icon name="create-outline" slot="icon-only"></ion-icon>
         </ion-item-option>
-        <ion-item-option (click)="deleteAlert(product)" color="danger">
+        <ion-item-option (click)="deleteProduct(product)" color="danger">
           <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
         </ion-item-option>
       </ion-item-options>
 
     </ion-item-sliding>
   </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="caret-up-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button color="primary" (click)="exportDataBase()" >
+        <ion-icon name="exit-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button color="primary" (click)="importDataBase()"  >
+        <ion-icon name="server-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
 </ion-content>

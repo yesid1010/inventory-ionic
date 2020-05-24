@@ -1,7 +1,8 @@
-import { Component, OnInit} from '@angular/core';
+import { Component} from '@angular/core';
 import {Product} from '../models/product.model';
+import {SqliteService} from '../services/sqlite.service';
+import {AlertService} from '../services/alert.service';
 import { AlertController } from '@ionic/angular';
-import {SqliteService} from '../services/sqlite.service'
 
 @Component({
   selector: 'app-tab2',
@@ -11,29 +12,30 @@ import {SqliteService} from '../services/sqlite.service'
 export class Tab2Page {
 
   products : Product[] = [];
-  constructor(private alertctr:AlertController,
-              private sqliteService : SqliteService) {
+
+  constructor(private sqliteService : SqliteService,
+              private alerService : AlertService,
+              private alertctr:AlertController,) {
   }
 
   ionViewWillEnter() {
-    this.getProducts();
+     this.getProducts();
   } 
-  // BASE DE DATOS
-  
+
+  //traer todos los productos
   async getProducts(){
    this.products = await this.sqliteService.getProducts() || [];
    console.log('productos desde el tab2 ',this.products)
   }
 
-  deleteAll(){
-    console.log('todo borrado')
-  }
-
+//abrir un producto
   openProduct(product:Product){
-    console.log('abriendo el producto ',product)
+    this.alerService.getProduct(product);
   }
 
-  async deleteAlert(product:Product){
+
+  /// funcion para eliminar un producto
+  async deleteProduct(product:Product){
     const alert = await this.alertctr.create({
       header: '¿Seguro desea eliminar?',
 
@@ -51,9 +53,9 @@ export class Tab2Page {
           handler: () => {
             this.sqliteService.deleteProduct(product)
             .then(()=> {
-              console.log('producto eliminado');
               this.getProducts();
             })
+            .catch(err => console.log('ha ocurrido un error al eliminar el producto',err))
           }
         }
       ]
@@ -61,8 +63,10 @@ export class Tab2Page {
 
     await alert.present();
   }
+  
 
-  async updateAlert(product:Product){
+  /// actualizar un producto
+  async updateProduct(product:Product){
     const alert = await this.alertctr.create({
       header: 'Actualizar Producto',
 
@@ -71,18 +75,22 @@ export class Tab2Page {
           name: 'name',
           type: 'text',
           placeholder: 'Nombre',
-          value : product.name
+          value : product.name,
+          max: 15,
+          min:3
         },
         {
           name: 'price',
-          type: 'text',
+          type: 'number',
           placeholder: 'precio',
-          value : product.price
+          value : product.price,
+          max: 7,
+          min:3
         }
       ],
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
@@ -106,6 +114,53 @@ export class Tab2Page {
       ]
     });
 
+    await alert.present();
+  }
+
+  exportDataBase(){
+    this.sqliteService.ExportDataBase()
+  }
+
+  importDataBase(){
+    this.sqliteService.importDataBase().then((data)=>{
+      if(data == 0){
+        this.alerService.mensaje('Archivo no compatible');
+        console.log(data);
+      }else{
+        if(data == 1){
+        this.alerService.mensaje('Base de datos importada');
+        console.log(data);
+        this.getProducts()
+        }
+      }
+    }) 
+  }
+
+  async DeleteAllProducts(){
+    const alert = await this.alertctr.create({
+      header:'¿Seguro que desea eliminar todos los productos?',
+      buttons:[
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        },
+        {
+          text: 'Ok',
+          handler: () => {
+            this.sqliteService.deleteAllProducts()
+            .then(()=>{
+              this.getProducts();
+            })
+            .catch(err => console.log('ha ocurrido un error al eliminar los productos',err))
+            
+          }      
+        }
+    ]
+    })
     await alert.present();
   }
 }

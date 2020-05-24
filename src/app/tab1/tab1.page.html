@@ -1,11 +1,19 @@
 
-<ion-content class="ion-padding"  [fullscreen]="true">
+<ion-content>
+    
 
-<ion-button class="ion-padding" (click)="save()" fill="outline" expand="full"  size="large" shape="round">
-  Agregar
-</ion-button>
-<ion-button class="ion-padding" (click)="search()" fill="outline" expand="full" size="large" shape="round">
-  Consultar
-</ion-button>
+  <ion-slides>
+      <ion-slide>
+          
+          <ion-button expand="full"
+                      fill="outline"
+                      size="large"
+                      shape="round"
+                      (click)="save()">
+              Scanner
+          </ion-button>
+      </ion-slide>
+  </ion-slides>
+
+
 </ion-content>
-
