@@ -22,6 +22,26 @@ export class Tab2Page {
      this.getProducts();
   } 
 
+  // Buscar producto
+   BuscarProducto(event){
+    //this.getProducts()
+
+    let producto = event.target.value;
+
+    if(!producto){
+      return this.getProducts();
+    }
+
+    this.products = this.products.filter((item=>{
+      if(item.name && producto){
+        return (item.name.toLowerCase().indexOf(producto.toLowerCase())>-1)
+      }
+      
+    }))
+
+    
+  }
+
   //traer todos los productos
   async getProducts(){
    this.products = await this.sqliteService.getProducts() || [];
